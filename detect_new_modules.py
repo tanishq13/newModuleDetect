@@ -3,6 +3,8 @@ import subprocess
 
 MAX_DEPTH = 3
 
+CODEOWNERS_FILE = 'CODEOWNERS'
+
 APPS_DIR  = os.path.dirname(os.path.abspath(__file__))
 
 print(MAX_DEPTH, APPS_DIR )
@@ -28,7 +30,7 @@ def detect_new_modules():
     new_modules = []
     for file_status in staged_files:
         status, file_path = file_status.split("\t")
-        print(status,file_path)
+        # print(status,file_path)
         # Check only added (A) or renamed (R) files
         if status in ["A", "R"] and file_path.endswith(".py"):
             # Ensure the file is within the apps directory and within the depth limit
@@ -36,15 +38,33 @@ def detect_new_modules():
                 new_modules.append(file_path)
     return new_modules
 
+def is_module_in_codeowners(file_path):
+    if not os.path.exists(CODEOWNERS_FILE):
+        print(f"Error: {CODEOWNERS_FILE} not found!")
+        return False
+    with open(CODEOWNERS_FILE, 'r') as file:
+        codeowners = file.read().splitlines()
+        # Check if the file_path exists in the codeowners file
+    flag = 0
+    for line in codeowners:
+        if file_path in line:
+            flag = 1
+    return flag
+
+
 def main():
     new_modules = detect_new_modules()
 
     if new_modules:
         print("Detected newly added Python modules:")
         for module in new_modules:
-            print(f" - {module}")
+            flag = is_module_in_codeowners(module)
+            if(flag == 0):
+                print(f" - {module}")
+                exit(1)
+
         print("Please verify the module addition before committing.")
-        exit(1)  # Exit with non-zero status to prevent commit
+        exit(0)  # Exit with non-zero status to prevent commit
     else:
         print("No new modules detected.")
         exit(0)  # Exit with zero status to allow commit

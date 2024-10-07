@@ -1,0 +1,10 @@
+[my_tennis_club]
+my_tennis_club/manage.py
+my_tennis_club/my_tennis_club/__init__.py
+my_tennis_club/my_tennis_club/asgi.py
+my_tennis_club/my_tennis_club/settings.py
+my_tennis_club/my_tennis_club/urls.py
+my_tennis_club/my_tennis_club/wsgi.py
+
+
+detect_new_modules.py
